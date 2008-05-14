@@ -23,5 +23,3 @@ public:
 	virtual CString GetDefaultSQL();
 	virtual void DoFieldExchange(CFieldExchange* pFX);
 };
-
-
