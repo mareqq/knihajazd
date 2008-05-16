@@ -8,8 +8,8 @@ CCestaRecordset::CCestaRecordset(CDatabase* pdb)
 {
 	m_AId = 0;
 	m_SRok = 0;
-	m_CCiel = L"";
-	m_CUcel = L"";
+	m_CCiel = "";
+	m_CUcel = "";
 	m_CPocetKm = 0.0;
 	m_CPocStav = 0.0;
 	m_CKonStav = 0.0;
@@ -29,10 +29,6 @@ CString CCestaRecordset::GetDefaultSQL()
 void CCestaRecordset::DoFieldExchange(CFieldExchange* pFX)
 {
 	pFX->SetFieldType(CFieldExchange::outputColumn);
-
-    // Macros such as RFX_Text() and RFX_Int() are dependent on the
-    // type of the member variable, not the type of the field in the database.
-    // ODBC will try to automatically convert the column value to the requested type
     RFX_Long(pFX, _T("[a_id]"), m_AId);
 	RFX_Long(pFX, _T("[s_rok]"), m_SRok);
 	RFX_Text(pFX, _T("[c_ciel]"), m_CCiel);

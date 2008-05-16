@@ -13,26 +13,64 @@ CFirmaRecordset::CFirmaRecordset(CDatabase* pdb)
 	m_FMesto = L"";
 	m_FPsc = L"";
 
-    m_nFields = 6;
     m_nDefaultType = dynaset;
+
+    SetSQLNacitanieZoznamuFiriem();
 }
 
 CString CFirmaRecordset::GetDefaultSQL()
 {
-	return _T("[firma]");
+	return m_strSQL;
 }
 
 void CFirmaRecordset::DoFieldExchange(CFieldExchange* pFX)
 {
 	pFX->SetFieldType(CFieldExchange::outputColumn);
-
-    // Macros such as RFX_Text() and RFX_Int() are dependent on the
-    // type of the member variable, not the type of the field in the database.
-    // ODBC will try to automatically convert the column value to the requested type
 	RFX_Long(pFX, _T("[f_id]"), m_FId);
-	RFX_Text(pFX, _T("[f_nazov]"), m_FNazov);
-	RFX_Text(pFX, _T("[f_ulica]"), m_FUlica);
-	RFX_Text(pFX, _T("[f_cislo]"), m_FCislo);
-	RFX_Text(pFX, _T("[f_mesto]"), m_FMesto);
-	RFX_Text(pFX, _T("[f_psc]"), m_FPsc);
+    if (m_nFields > 1)
+    {
+	    RFX_Text(pFX, _T("[f_nazov]"), m_FNazov);
+	    RFX_Text(pFX, _T("[f_ulica]"), m_FUlica);
+	    RFX_Text(pFX, _T("[f_cislo]"), m_FCislo);
+	    RFX_Text(pFX, _T("[f_mesto]"), m_FMesto);
+	    RFX_Text(pFX, _T("[f_psc]"), m_FPsc);
+    }
+
+    if (m_nParams > 0)
+    {
+        pFX->SetFieldType(CFieldExchange::inputParam);
+        RFX_Long(pFX, _T("[f_id]"), m_FIdParam);
+    }
+}
+
+void CFirmaRecordset::SetSQLNacitanieZoznamuFiriem()
+{
+    m_strSQL = _T("SELECT * FROM [firma]");
+    m_strFilter = _T("");
+    m_strSort = _T("[f_nazov], [f_mesto], [f_psc], [f_ulica], [f_cislo]");
+
+    m_nFields = 6;
+    m_nParams = 0;
+}
+
+void CFirmaRecordset::SetSQLNacitanieKonkretnejFirmy(long fIdParam)
+{
+    m_strSQL = _T("SELECT * FROM [firma]");
+    m_strFilter = _T("[f_id] = ?");
+    m_strSort = _T("");
+
+    m_FIdParam = fIdParam;
+
+    m_nFields = 6;
+    m_nParams = 1;
+}
+
+void CFirmaRecordset::SetSQLNacitanieMaximalnehoId()
+{
+    m_strSQL = _T("SELECT MAX([f_id]) FROM [firma]");
+    m_strFilter = _T("");
+    m_strSort = _T("");
+
+    m_nFields = 1;
+    m_nParams = 0;
 }

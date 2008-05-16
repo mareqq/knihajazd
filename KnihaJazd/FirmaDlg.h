@@ -1,36 +1,34 @@
 #pragma once
 
-#include "afxcmn.h"
+#include "FirmaRecordset.h"
 
 class CFirmaDlg : public CDialog
 {
 	DECLARE_DYNAMIC(CFirmaDlg)
 
 public:
-	int ID[100], pocet, findID;
-	int i, j;
-	bool ok;
-	
-	CFirmaDlg(CWnd* pParent = NULL);  
-
-//musime nastavit automaticke ID, ale zatial:
-	int m_IdFirmy;
-
-    CString m_Nazov; // Text s názvom firmy
-// Adresa firmy:
+    CString m_Nazov;
     CString m_Ulica;
-	CString m_Cislo;
-	CString m_Mesto;
-	CString m_Psc;
+    CString m_Cislo;
+    CString m_Psc;
+    CString m_Mesto;
 
+    CFirmaDlg(CWnd* pParent = NULL);
 	virtual ~CFirmaDlg();
 
 	enum { IDD = IDD_FIRMADLG };
 
+    void SetParams(int idFirmy);
+    int GetIdFirmy() { return m_IdFirmy; }
+
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX); 
+	virtual void DoDataExchange(CDataExchange* pDX);
+    virtual BOOL OnInitDialog();
+    virtual void OnOK();
 
 	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnBnClickedOk();
+
+    CFirmaRecordset m_rsFirma;
+    int m_IdFirmy; // Id firmy, s ktorou pracujeme.
+                   // Ak je 0, tak sa bude pridavat nova firma.
 };

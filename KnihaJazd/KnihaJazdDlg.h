@@ -1,6 +1,7 @@
 #pragma once
 
 #include "afxcmn.h"
+#include "afxwin.h"
 
 class CKnihaJazdDlg : public CDialog
 {
@@ -9,8 +10,7 @@ public:
 
     CListCtrl m_ZoznamAut; // Control so zoznamom aut
     CString m_Firma; // Text s nadpisom firmy
-    int m_idFirma; // ID firmy, s ktorou pracujeme
-    CString m_NazovFirmy; // Nazov firmy, s ktorou pracujeme
+    CStatic m_FirmaCtrl; // Control s nadpisom firmy
 
     CKnihaJazdDlg(CWnd* pParent = NULL);
 
@@ -24,15 +24,20 @@ protected:
     virtual void OnOK();
     virtual void OnCancel();
 
-    afx_msg void OnFirmaVyber();
-    afx_msg void OnFirmaPridaj();
-	afx_msg void OnFirmaUprav();
-	afx_msg void OnFirmaZmaz();
-	afx_msg void OnKoniec();
+    afx_msg void OnFirmaOtvor();
+    afx_msg void OnFirmaZmaz();
+    afx_msg void OnFirmaNova();
+    afx_msg void OnFirmaVlastnosti();
+    afx_msg void OnFirmaKoniec();
+    afx_msg void OnUpdateFirmaVlastnosti(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateFirmaZmaz(CCmdUI *pCmdUI);
+	afx_msg void OnBnClickedBtnvyberauta();
+	afx_msg void OnBnClickedBtnvybercesty();
 	DECLARE_MESSAGE_MAP()
 
-public:
-	afx_msg void OnBnClickedBtnvyberauta();
-public:
-	afx_msg void OnBnClickedBtnvybercesty();
+    void AktualizujPopisFirmy();
+
+protected:
+    int m_IdFirmy; // ID firmy, s ktorou pracujeme
+    CFont m_FontFirma; // Font nadpisu firmy;
 };
