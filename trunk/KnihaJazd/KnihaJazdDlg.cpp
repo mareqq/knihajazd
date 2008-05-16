@@ -2,7 +2,12 @@
 #include "KnihaJazd.h"
 #include "KnihaJazdDlg.h"
 #include "VyberFirmyDlg.h"
+#include "VyberAutaDlg.h"
+#include "VyberCestyDlg.h"
 #include "FirmaRecordset.h"
+#include "AutoRecordset.h"
+#include "CestaRecordset.h"
+#include "FirmaDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,6 +28,12 @@ void CKnihaJazdDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CKnihaJazdDlg, CDialog)
     ON_COMMAND(ID_FIRMA_VYBER, &CKnihaJazdDlg::OnFirmaVyber)
+    ON_COMMAND(ID_FIRMA_PRIDAJ, &CKnihaJazdDlg::OnFirmaPridaj)
+    ON_COMMAND(ID_FIRMA_UPRAV, &CKnihaJazdDlg::OnFirmaUprav)
+    ON_COMMAND(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnFirmaZmaz)
+	ON_COMMAND(ID_SUBOR_KONIEC, &CKnihaJazdDlg::OnKoniec)
+	ON_BN_CLICKED(IDC_BtnVyberAuta, &CKnihaJazdDlg::OnBnClickedBtnvyberauta)
+	ON_BN_CLICKED(IDC_BtnVyberCesty, &CKnihaJazdDlg::OnBnClickedBtnvybercesty)
 END_MESSAGE_MAP()
 
 BOOL CKnihaJazdDlg::OnInitDialog()
@@ -53,7 +64,7 @@ BOOL CKnihaJazdDlg::OnInitDialog()
 
     // Zoznam aut
     m_ZoznamAut.SetExtendedStyle(LVS_EX_FULLROWSELECT);
-    m_ZoznamAut.InsertColumn(0, _T("Znaèka"), LVCFMT_LEFT, 100);
+    m_ZoznamAut.InsertColumn(0, _T("ŠPZ"), LVCFMT_LEFT, 100);
     m_ZoznamAut.InsertColumn(1, _T("Typ"), LVCFMT_LEFT, 200);
 
 /*
@@ -119,6 +130,34 @@ BOOL CKnihaJazdDlg::OnInitDialog()
 
     // Ukoncim pracu s tabulkou
     rs.Close();
+
+
+
+
+	NAPRIKLAD
+
+	CFirmaRecordset rs(theApp.GetDB());
+
+    rs.Open();
+    rs.AddNew();
+    rs.m_FId = 1;
+    rs.m_FNazov = _T("Autoplyn, s.r.o");
+	rs.m_FUlica = _T("Zádubnie");
+	rs.m_FCislo = _T("91");
+	rs.m_FMesto = _T("Žilina");
+	rs.m_FPsc = _T("01003");
+    rs.Update();
+
+    rs.AddNew();
+    rs.m_FId = 2;
+    rs.m_FNazov = _T("Lenka Paverová");
+	rs.m_FUlica = _T("Športovcov");
+	rs.m_FCislo = _T("342/3");
+	rs.m_FMesto = _T("Považská Bystrica");
+	rs.m_FPsc = _T("01701");
+    rs.Update();
+
+    rs.Close();
 */
 
     // Nadpis firmy
@@ -132,6 +171,35 @@ void CKnihaJazdDlg::OnFirmaVyber()
 {
     CVyberFirmyDlg dlg(this);
     dlg.DoModal();
+}
+
+void CKnihaJazdDlg::OnFirmaPridaj()
+{
+    CFirmaDlg dlg(this);
+    dlg.DoModal();
+}
+
+void CKnihaJazdDlg::OnFirmaUprav()
+{
+   
+}
+
+void CKnihaJazdDlg::OnFirmaZmaz()
+{
+    
+}
+
+void CKnihaJazdDlg::OnKoniec()
+{
+   // Otazka
+    if (AfxMessageBox(_T("Naozaj chcete ukonèi aplikáciu?"), MB_YESNO) != IDYES)
+        return;
+
+    // Uzavrieme spojenie do DB
+    theApp.GetDB()->Close();
+
+    // Spracovanie prenechame rodicovskej triede - ukonci dialog
+    CDialog::OnCancel();
 }
 
 void CKnihaJazdDlg::OnOK()
@@ -150,4 +218,16 @@ void CKnihaJazdDlg::OnCancel()
 
     // Spracovanie prenechame rodicovskej triede - ukonci dialog
     CDialog::OnCancel();
+}
+
+void CKnihaJazdDlg::OnBnClickedBtnvyberauta()
+{
+	CVyberAutaDlg dlg(this);
+	dlg.DoModal();
+}
+
+void CKnihaJazdDlg::OnBnClickedBtnvybercesty()
+{
+	CVyberCestyDlg dlg(this);
+	dlg.DoModal();
 }

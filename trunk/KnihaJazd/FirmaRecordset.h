@@ -5,7 +5,7 @@ class CFirmaRecordset : public CRecordset
 	DECLARE_DYNAMIC(CFirmaRecordset)
 
 public:
-	long m_FId;
+	long	m_FId;
 	CString m_FNazov;
 	CString m_FUlica;
 	CString m_FCislo;

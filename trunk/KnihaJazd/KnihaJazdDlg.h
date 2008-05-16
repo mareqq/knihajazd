@@ -9,6 +9,8 @@ public:
 
     CListCtrl m_ZoznamAut; // Control so zoznamom aut
     CString m_Firma; // Text s nadpisom firmy
+    int m_idFirma; // ID firmy, s ktorou pracujeme
+    CString m_NazovFirmy; // Nazov firmy, s ktorou pracujeme
 
     CKnihaJazdDlg(CWnd* pParent = NULL);
 
@@ -23,9 +25,14 @@ protected:
     virtual void OnCancel();
 
     afx_msg void OnFirmaVyber();
+    afx_msg void OnFirmaPridaj();
+	afx_msg void OnFirmaUprav();
+	afx_msg void OnFirmaZmaz();
+	afx_msg void OnKoniec();
 	DECLARE_MESSAGE_MAP()
 
-protected:
-    int m_idFirma; // ID firmy, s ktorou pracujeme
-    CString m_NazovFirmy; // Nazov firmy, s ktorou pracujeme
+public:
+	afx_msg void OnBnClickedBtnvyberauta();
+public:
+	afx_msg void OnBnClickedBtnvybercesty();
 };
