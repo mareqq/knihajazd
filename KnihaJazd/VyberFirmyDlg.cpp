@@ -21,6 +21,7 @@ void CVyberFirmyDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CVyberFirmyDlg, CDialog)
+	ON_BN_CLICKED(IDOK, &CVyberFirmyDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 BOOL CVyberFirmyDlg::OnInitDialog()
@@ -29,11 +30,11 @@ BOOL CVyberFirmyDlg::OnInitDialog()
 
     // Zoznam firiem
     m_ZoznamFiriem.SetExtendedStyle(LVS_EX_FULLROWSELECT);
-    m_ZoznamFiriem.InsertColumn(0, _T("N·zov"), LVCFMT_LEFT, 100);
-    m_ZoznamFiriem.InsertColumn(1, _T("Ulica"), LVCFMT_LEFT, 200);
-    m_ZoznamFiriem.InsertColumn(1, _T("Cislo"), LVCFMT_LEFT, 100);
-    m_ZoznamFiriem.InsertColumn(1, _T("Mesto"), LVCFMT_LEFT, 100);
-    m_ZoznamFiriem.InsertColumn(1, _T("PS»"), LVCFMT_LEFT, 100);
+    m_ZoznamFiriem.InsertColumn(0, _T("N·zov"), LVCFMT_LEFT, 110);
+    m_ZoznamFiriem.InsertColumn(1, _T("Ulica"), LVCFMT_LEFT, 110);
+    m_ZoznamFiriem.InsertColumn(2, _T("»Ìslo"), LVCFMT_LEFT, 65);
+    m_ZoznamFiriem.InsertColumn(3, _T("Mesto"), LVCFMT_LEFT, 110);
+    m_ZoznamFiriem.InsertColumn(4, _T("PS»"), LVCFMT_LEFT, 50);
 
     // Data
     CFirmaRecordset rs(theApp.GetDB());
@@ -52,4 +53,25 @@ BOOL CVyberFirmyDlg::OnInitDialog()
     rs.Close();
 
     return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+void CVyberFirmyDlg::OnBnClickedOk()
+{
+	vyber = m_ZoznamFiriem.GetSelectionMark(); // ide od nuly
+	id = (int)m_ZoznamFiriem.GetItemData(vyber);
+
+	CFirmaRecordset rs(theApp.GetDB());
+    rs.Open();
+    while (!rs.IsEOF())
+    {
+		if (rs.m_FId == id)
+			nazov = rs.m_FNazov;
+
+        rs.MoveNext();
+    }
+    rs.Close();
+
+//treba zmenit nazov firmy v knihajazddlg
+
+	OnOK();
 }

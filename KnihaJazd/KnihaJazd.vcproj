@@ -192,7 +192,23 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\AutoDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\AutoRecordset.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CestaDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CestaRecordset.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FirmaDlg.cpp"
 				>
 			</File>
 			<File
@@ -205,6 +221,10 @@
 			</File>
 			<File
 				RelativePath=".\KnihaJazdDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SpojRecordset.cpp"
 				>
 			</File>
 			<File
@@ -228,6 +248,14 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\VyberAutaDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\VyberCestyDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\VyberFirmyDlg.cpp"
 				>
 			</File>
@@ -238,7 +266,23 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\AutoDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AutoRecordset.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CestaDlg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CestaRecordset.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FirmaDlg.h"
 				>
 			</File>
 			<File
@@ -262,7 +306,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SpojRecordset.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VyberAutaDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VyberCestyDlg.h"
 				>
 			</File>
 			<File

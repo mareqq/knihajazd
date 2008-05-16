@@ -10,6 +10,7 @@ public:
     // unsupported	m_c_datum;
 	long m_AId;
 	long m_SRok;
+	COleDateTime m_CDatum;
 	CString m_CCiel;
 	CString m_CUcel;
 	double m_CPocetKm;

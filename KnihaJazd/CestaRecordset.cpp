@@ -8,8 +8,8 @@ CCestaRecordset::CCestaRecordset(CDatabase* pdb)
 {
 	m_AId = 0;
 	m_SRok = 0;
-	m_CCiel = "";
-	m_CUcel = "";
+	m_CCiel = L"";
+	m_CUcel = L"";
 	m_CPocetKm = 0.0;
 	m_CPocStav = 0.0;
 	m_CKonStav = 0.0;

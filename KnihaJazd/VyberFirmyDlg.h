@@ -9,6 +9,9 @@ class CVyberFirmyDlg : public CDialog
 public:
     CListCtrl m_ZoznamFiriem;
 
+	int vyber, id;
+	CString nazov;
+
 	CVyberFirmyDlg(CWnd* pParent = NULL);
 	virtual ~CVyberFirmyDlg();
 
@@ -19,4 +22,6 @@ protected:
 	virtual BOOL OnInitDialog();
 
     DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedOk();
 };
