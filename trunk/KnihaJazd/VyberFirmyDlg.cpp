@@ -8,6 +8,7 @@ IMPLEMENT_DYNAMIC(CVyberFirmyDlg, CDialog)
 CVyberFirmyDlg::CVyberFirmyDlg(CWnd* pParent)
 	: CDialog(CVyberFirmyDlg::IDD, pParent)
 {
+    m_IdVybratejFirmy = 0;
 }
 
 CVyberFirmyDlg::~CVyberFirmyDlg()
@@ -18,10 +19,12 @@ void CVyberFirmyDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_LIST_FIRMY, CVyberFirmyDlg::m_ZoznamFiriem);
+    DDX_Control(pDX, IDOK, m_TlacidloOk);
 }
 
 BEGIN_MESSAGE_MAP(CVyberFirmyDlg, CDialog)
-	ON_BN_CLICKED(IDOK, &CVyberFirmyDlg::OnBnClickedOk)
+    ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_FIRMY, &CVyberFirmyDlg::OnLvnItemChangedListFirmy)
+    ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LIST_FIRMY, &CVyberFirmyDlg::OnLvnItemActivateListFirmy)
 END_MESSAGE_MAP()
 
 BOOL CVyberFirmyDlg::OnInitDialog()
@@ -30,11 +33,11 @@ BOOL CVyberFirmyDlg::OnInitDialog()
 
     // Zoznam firiem
     m_ZoznamFiriem.SetExtendedStyle(LVS_EX_FULLROWSELECT);
-    m_ZoznamFiriem.InsertColumn(0, _T("N·zov"), LVCFMT_LEFT, 110);
-    m_ZoznamFiriem.InsertColumn(1, _T("Ulica"), LVCFMT_LEFT, 110);
-    m_ZoznamFiriem.InsertColumn(2, _T("»Ìslo"), LVCFMT_LEFT, 65);
-    m_ZoznamFiriem.InsertColumn(3, _T("Mesto"), LVCFMT_LEFT, 110);
-    m_ZoznamFiriem.InsertColumn(4, _T("PS»"), LVCFMT_LEFT, 50);
+    m_ZoznamFiriem.InsertColumn(0, _T("N·zov"), LVCFMT_LEFT, 200);
+    m_ZoznamFiriem.InsertColumn(1, _T("Ulica"), LVCFMT_LEFT, 100);
+    m_ZoznamFiriem.InsertColumn(2, _T("»Ìslo"), LVCFMT_LEFT, 100);
+    m_ZoznamFiriem.InsertColumn(3, _T("Mesto"), LVCFMT_LEFT, 100);
+    m_ZoznamFiriem.InsertColumn(4, _T("PS»"), LVCFMT_LEFT, 100);
 
     // Data
     CFirmaRecordset rs(theApp.GetDB());
@@ -52,26 +55,34 @@ BOOL CVyberFirmyDlg::OnInitDialog()
     }
     rs.Close();
 
-    return TRUE;  // return TRUE  unless you set the focus to a control
+    AktualizujOkno();
+    return TRUE;
 }
 
-void CVyberFirmyDlg::OnBnClickedOk()
+void CVyberFirmyDlg::OnOK()
 {
-	vyber = m_ZoznamFiriem.GetSelectionMark(); // ide od nuly
-	id = (int)m_ZoznamFiriem.GetItemData(vyber);
-
-	CFirmaRecordset rs(theApp.GetDB());
-    rs.Open();
-    while (!rs.IsEOF())
+    int item = m_ZoznamFiriem.GetSelectionMark();
+    if (item != -1)
     {
-		if (rs.m_FId == id)
-			nazov = rs.m_FNazov;
-
-        rs.MoveNext();
+        m_IdVybratejFirmy = (int)m_ZoznamFiriem.GetItemData(item);
+        CDialog::OnOK();
     }
-    rs.Close();
+}
 
-//treba zmenit nazov firmy v knihajazddlg
+void CVyberFirmyDlg::AktualizujOkno()
+{
+    int item = m_ZoznamFiriem.GetSelectionMark();
+    m_TlacidloOk.EnableWindow(item != -1);
+}
 
-	OnOK();
+void CVyberFirmyDlg::OnLvnItemChangedListFirmy(NMHDR *pNMHDR, LRESULT *pResult)
+{
+    AktualizujOkno();
+    *pResult = 0;
+}
+
+void CVyberFirmyDlg::OnLvnItemActivateListFirmy(NMHDR *pNMHDR, LRESULT *pResult)
+{
+    OnOK();
+    *pResult = 0;
 }

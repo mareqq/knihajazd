@@ -1,6 +1,7 @@
 #pragma once
 
 #include "afxcmn.h"
+#include "afxwin.h"
 
 class CVyberFirmyDlg : public CDialog
 {
@@ -8,20 +9,26 @@ class CVyberFirmyDlg : public CDialog
 
 public:
     CListCtrl m_ZoznamFiriem;
-
-	int vyber, id;
-	CString nazov;
+    CButton m_TlacidloOk;
 
 	CVyberFirmyDlg(CWnd* pParent = NULL);
 	virtual ~CVyberFirmyDlg();
 
 	enum { IDD = IDD_VYBERFIRMYDLG };
 
+    int GetIdVybratejFirmy() { return m_IdVybratejFirmy; }
+
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual BOOL OnInitDialog();
+    virtual void OnOK();
 
+    afx_msg void OnLvnItemChangedListFirmy(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnLvnItemActivateListFirmy(NMHDR *pNMHDR, LRESULT *pResult);
     DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnBnClickedOk();
+
+    void AktualizujOkno();
+
+protected:
+    int m_IdVybratejFirmy;
 };

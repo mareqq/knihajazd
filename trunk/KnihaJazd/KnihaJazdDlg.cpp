@@ -1,13 +1,14 @@
 #include "stdafx.h"
+#include "afxpriv.h"
 #include "KnihaJazd.h"
 #include "KnihaJazdDlg.h"
+#include "FirmaRecordset.h"
+#include "FirmaDlg.h"
 #include "VyberFirmyDlg.h"
 #include "VyberAutaDlg.h"
 #include "VyberCestyDlg.h"
-#include "FirmaRecordset.h"
 #include "AutoRecordset.h"
 #include "CestaRecordset.h"
-#include "FirmaDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -17,6 +18,7 @@ CKnihaJazdDlg::CKnihaJazdDlg(CWnd* pParent)
 	: CDialog(CKnihaJazdDlg::IDD, pParent)
     , m_Firma(_T(""))
 {
+    m_IdFirmy = 0;
 }
 
 void CKnihaJazdDlg::DoDataExchange(CDataExchange* pDX)
@@ -24,14 +26,17 @@ void CKnihaJazdDlg::DoDataExchange(CDataExchange* pDX)
     CDialog::DoDataExchange(pDX);
     DDX_Text(pDX, IDC_STATIC_FIRMA, m_Firma);
     DDX_Control(pDX, IDC_LIST_AUTA, m_ZoznamAut);
+    DDX_Control(pDX, IDC_STATIC_FIRMA, m_FirmaCtrl);
 }
 
 BEGIN_MESSAGE_MAP(CKnihaJazdDlg, CDialog)
-    ON_COMMAND(ID_FIRMA_VYBER, &CKnihaJazdDlg::OnFirmaVyber)
-    ON_COMMAND(ID_FIRMA_PRIDAJ, &CKnihaJazdDlg::OnFirmaPridaj)
-    ON_COMMAND(ID_FIRMA_UPRAV, &CKnihaJazdDlg::OnFirmaUprav)
+    ON_COMMAND(ID_FIRMA_OTVOR, &CKnihaJazdDlg::OnFirmaOtvor)
     ON_COMMAND(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnFirmaZmaz)
-	ON_COMMAND(ID_SUBOR_KONIEC, &CKnihaJazdDlg::OnKoniec)
+    ON_COMMAND(ID_FIRMA_NOVA, &CKnihaJazdDlg::OnFirmaNova)
+    ON_COMMAND(ID_FIRMA_VLASTNOSTI, &CKnihaJazdDlg::OnFirmaVlastnosti)
+    ON_COMMAND(ID_FIRMA_KONIEC, &CKnihaJazdDlg::OnFirmaKoniec)
+    ON_UPDATE_COMMAND_UI(ID_FIRMA_VLASTNOSTI, &CKnihaJazdDlg::OnUpdateFirmaVlastnosti)
+    ON_UPDATE_COMMAND_UI(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnUpdateFirmaZmaz)
 	ON_BN_CLICKED(IDC_BtnVyberAuta, &CKnihaJazdDlg::OnBnClickedBtnvyberauta)
 	ON_BN_CLICKED(IDC_BtnVyberCesty, &CKnihaJazdDlg::OnBnClickedBtnvybercesty)
 END_MESSAGE_MAP()
@@ -61,11 +66,6 @@ BOOL CKnihaJazdDlg::OnInitDialog()
         EndDialog(IDCANCEL);
         return TRUE;
     }
-
-    // Zoznam aut
-    m_ZoznamAut.SetExtendedStyle(LVS_EX_FULLROWSELECT);
-    m_ZoznamAut.InsertColumn(0, _T("ŠPZ"), LVCFMT_LEFT, 100);
-    m_ZoznamAut.InsertColumn(1, _T("Typ"), LVCFMT_LEFT, 200);
 
 /*
     // Praca s DB
@@ -130,76 +130,29 @@ BOOL CKnihaJazdDlg::OnInitDialog()
 
     // Ukoncim pracu s tabulkou
     rs.Close();
-
-
-
-
-	NAPRIKLAD
-
-	CFirmaRecordset rs(theApp.GetDB());
-
-    rs.Open();
-    rs.AddNew();
-    rs.m_FId = 1;
-    rs.m_FNazov = _T("Autoplyn, s.r.o");
-	rs.m_FUlica = _T("Zádubnie");
-	rs.m_FCislo = _T("91");
-	rs.m_FMesto = _T("Žilina");
-	rs.m_FPsc = _T("01003");
-    rs.Update();
-
-    rs.AddNew();
-    rs.m_FId = 2;
-    rs.m_FNazov = _T("Lenka Paverová");
-	rs.m_FUlica = _T("Športovcov");
-	rs.m_FCislo = _T("342/3");
-	rs.m_FMesto = _T("Považská Bystrica");
-	rs.m_FPsc = _T("01701");
-    rs.Update();
-
-    rs.Close();
 */
 
-    // Nadpis firmy
-    m_Firma = _T("Firma: ") + m_NazovFirmy;
+    // Firma
+    LOGFONT lf = {0};
+    // Nacitam si specifikaciu povodneho fontu.
+    CFont *pFont = m_FirmaCtrl.GetFont();
+    pFont->GetLogFont(&lf);
+    // Upravim specifikaciu fontu.
+    lf.lfWeight = FW_BOLD;
+    // Vytvorim novy font podla upravenej specifikacie.
+    m_FontFirma.CreateFontIndirect(&lf);
+    // Nastavim font popisu firmy.
+    m_FirmaCtrl.SetFont(&m_FontFirma);
+    // Aktualizujem text popisu firmy.
+    AktualizujPopisFirmy();
+
+    // Zoznam aut
+    m_ZoznamAut.SetExtendedStyle(LVS_EX_FULLROWSELECT);
+    m_ZoznamAut.InsertColumn(0, _T("Znaèka"), LVCFMT_LEFT, 100);
+    m_ZoznamAut.InsertColumn(1, _T("Typ"), LVCFMT_LEFT, 200);
 
     UpdateData(FALSE);
-    return TRUE;  // return TRUE  unless you set the focus to a control
-}
-
-void CKnihaJazdDlg::OnFirmaVyber()
-{
-    CVyberFirmyDlg dlg(this);
-    dlg.DoModal();
-}
-
-void CKnihaJazdDlg::OnFirmaPridaj()
-{
-    CFirmaDlg dlg(this);
-    dlg.DoModal();
-}
-
-void CKnihaJazdDlg::OnFirmaUprav()
-{
-   
-}
-
-void CKnihaJazdDlg::OnFirmaZmaz()
-{
-    
-}
-
-void CKnihaJazdDlg::OnKoniec()
-{
-   // Otazka
-    if (AfxMessageBox(_T("Naozaj chcete ukonèi aplikáciu?"), MB_YESNO) != IDYES)
-        return;
-
-    // Uzavrieme spojenie do DB
-    theApp.GetDB()->Close();
-
-    // Spracovanie prenechame rodicovskej triede - ukonci dialog
-    CDialog::OnCancel();
+    return TRUE;
 }
 
 void CKnihaJazdDlg::OnOK()
@@ -218,6 +171,94 @@ void CKnihaJazdDlg::OnCancel()
 
     // Spracovanie prenechame rodicovskej triede - ukonci dialog
     CDialog::OnCancel();
+}
+
+void CKnihaJazdDlg::OnFirmaOtvor()
+{
+    CVyberFirmyDlg dlg(this);
+    if (dlg.DoModal() == IDOK)
+    {
+        // Firma bola vybrana
+        m_IdFirmy = dlg.GetIdVybratejFirmy();
+        AktualizujPopisFirmy();
+    }
+}
+
+void CKnihaJazdDlg::OnFirmaZmaz()
+{
+    CString str;
+    str.Format(_T("Naozaj chcete vymaza firmu %s a všetky jej autá a cesty?"), m_Firma);
+
+    if (AfxMessageBox(str, MB_YESNO) == IDYES)
+    {
+        // Zmazanie firmy
+        CFirmaRecordset rs(theApp.GetDB());
+        rs.SetSQLNacitanieKonkretnejFirmy(m_IdFirmy);
+        rs.Open();
+        rs.Delete();
+        rs.Close();
+
+        m_IdFirmy = 0;
+        AktualizujPopisFirmy();
+
+        // Vyber dalsej firmy, s ktorou budeme pracovat
+        OnFirmaOtvor();
+    }
+}
+
+void CKnihaJazdDlg::OnFirmaNova()
+{
+    CFirmaDlg dlg;
+    if (dlg.DoModal() == IDOK)
+    {
+        m_IdFirmy = dlg.GetIdFirmy();
+        AktualizujPopisFirmy();
+    }
+}
+
+void CKnihaJazdDlg::OnFirmaVlastnosti()
+{
+    CFirmaDlg dlg;
+    dlg.SetParams(m_IdFirmy);
+    if (dlg.DoModal() == IDOK)
+    {
+        AktualizujPopisFirmy();
+    }
+}
+
+void CKnihaJazdDlg::OnFirmaKoniec()
+{
+    OnCancel();
+}
+
+void CKnihaJazdDlg::AktualizujPopisFirmy()
+{
+    if (m_IdFirmy == 0)
+    {
+        m_Firma = _T("Žiadna firma nebola vybraná.")
+            _T("  Vyberte firmu vo¾bou Firma > Vyber alebo priadjte novú vo¾bou Firma > Nová.");
+    }
+    else
+    {
+        CFirmaRecordset rs(theApp.GetDB());
+        rs.SetSQLNacitanieKonkretnejFirmy(m_IdFirmy);
+        rs.Open();
+        m_Firma.Format(_T("%s, %s %s, %s %s"), rs.m_FNazov, rs.m_FUlica, rs.m_FCislo,
+            rs.m_FPsc, rs.m_FMesto);
+        rs.Close();
+    }
+
+    UpdateData(FALSE);
+}
+
+void CKnihaJazdDlg::OnUpdateFirmaVlastnosti(CCmdUI *pCmdUI)
+{
+    pCmdUI->Enable(m_IdFirmy != 0);
+}
+
+void CKnihaJazdDlg::OnUpdateFirmaZmaz(CCmdUI *pCmdUI)
+{
+    pCmdUI->Enable(m_IdFirmy != 0);
 }
 
 void CKnihaJazdDlg::OnBnClickedBtnvyberauta()
