@@ -224,10 +224,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SpojRecordset.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -317,10 +313,6 @@
 			</File>
 			<File
 				RelativePath=".\Resource.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SpojRecordset.h"
 				>
 			</File>
 			<File

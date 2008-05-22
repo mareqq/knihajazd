@@ -2,14 +2,10 @@
 
 class CCestaRecordset : public CRecordset
 {
-public:
-	CCestaRecordset(CDatabase* pDatabase = NULL);
-
 	DECLARE_DYNAMIC(CCestaRecordset)
 
-    // unsupported	m_c_datum;
+public:
 	long m_AId;
-	long m_SRok;
 	COleDateTime m_CDatum;
 	CString m_CCiel;
 	CString m_CUcel;
@@ -20,7 +16,19 @@ public:
 	double m_CStravne;
 	double m_COstatne;
 
+	long m_AIdParam;
+	COleDateTime m_CDatumParam;
+
 public:
+	CCestaRecordset(CDatabase* pDatabase = NULL);
+
 	virtual CString GetDefaultSQL();
 	virtual void DoFieldExchange(CFieldExchange* pFX);
+
+    void SetSQLNacitanieZoznamuCiest();
+    void SetSQLNacitanieKonkretnejCesty(long aIdParam, COleDateTime Datum);
+    void SetSQLNacitanieMaximalnehoDatumu(long aIdParam, COleDateTime Datum);
+
+protected:
+    CString m_strSQL;
 };
