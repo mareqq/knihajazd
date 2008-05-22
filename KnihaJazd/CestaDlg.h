@@ -28,7 +28,7 @@ public:
 
 	enum { IDD = IDD_CESTADLG };
 
-	void SetParamsA(int idAuta);
+	void SetParamsA(long idAuta);
 	void SetParamsD(COleDateTime Datum);
 	void SetParamsKS(float KmSadzba);
 
@@ -40,6 +40,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
     CCestaRecordset m_rsCesta;
-    int m_IdAuta; // Id firmy, s ktorou pracujeme.
+    long m_IdAuta; // Id firmy, s ktorou pracujeme.
                    // Ak je 0, tak sa bude pridavat nova firma.
 };

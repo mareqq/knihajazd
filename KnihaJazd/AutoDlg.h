@@ -19,9 +19,9 @@ public:
 
 	enum { IDD = IDD_AUTODLG };
 
-	void SetParamsA(int idAuta);
-	void SetParamsF(int idFirmy);
-	int GetIdAuta() { return m_IdAuta; }
+	void SetParamsA(long idAuta);
+	void SetParamsF(long idFirmy);
+	long GetIdAuta() { return m_IdAuta; }
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);  
@@ -32,7 +32,7 @@ protected:
 
 	CAutoRecordset m_rsAuto;
 	
-	int m_IdFirmy; //Id firmy, s ktorou pracujeme a v ktorej sa auto nachadza
-    int m_IdAuta; // Id auta, s ktorym pracujeme.
+	long m_IdFirmy; //Id firmy, s ktorou pracujeme a v ktorej sa auto nachadza
+    long m_IdAuta; // Id auta, s ktorym pracujeme.
                   // Ak je 0, tak sa bude pridavat nove auto.
 };

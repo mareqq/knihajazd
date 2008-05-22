@@ -42,12 +42,11 @@ protected:
 	afx_msg void OnAutoOtvor();
 	afx_msg void OnAutoZmaz();
 	afx_msg void OnAutoNove();
-//	afx_msg void OnAutoVlastnosti();
+	afx_msg void OnAutoVlastnosti();
 
     afx_msg void OnUpdateAutoVlastnosti(CCmdUI *pCmdUI);
-//    afx_msg void OnUpdateFirmaZmaz(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateAutoZmaz(CCmdUI *pCmdUI);
 
-	afx_msg void OnLvnItemChangedListAuta(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnLvnItemActivateListAuta(NMHDR *pNMHDR, LRESULT *pResult);
 
 	DECLARE_MESSAGE_MAP()
@@ -55,7 +54,8 @@ protected:
     void AktualizujPopisFirmy();
 
 protected:
-    int m_IdFirmy; // ID firmy, s ktorou pracujeme
-    int m_IdAuta; // ID auta, s ktorym pracujeme
+    long m_IdFirmy; // ID firmy, s ktorou pracujeme
+    long m_IdAuta; // ID auta, s ktorym pracujeme
     CFont m_FontFirma; // Font nadpisu firmy;
+	double m_KmSadzba;
 };

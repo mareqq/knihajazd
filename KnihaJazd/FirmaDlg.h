@@ -18,8 +18,8 @@ public:
 
 	enum { IDD = IDD_FIRMADLG };
 
-    void SetParams(int idFirmy);
-    int GetIdFirmy() { return m_IdFirmy; }
+    void SetParams(long idFirmy);
+    long GetIdFirmy() { return m_IdFirmy; }
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -29,6 +29,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
     CFirmaRecordset m_rsFirma;
-    int m_IdFirmy; // Id firmy, s ktorou pracujeme.
+    long m_IdFirmy; // Id firmy, s ktorou pracujeme.
                    // Ak je 0, tak sa bude pridavat nova firma.
 };

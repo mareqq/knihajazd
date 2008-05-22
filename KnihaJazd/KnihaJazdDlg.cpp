@@ -32,7 +32,7 @@ void CKnihaJazdDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CKnihaJazdDlg, CDialog)
-    //Firma
+  //Firma
 	ON_COMMAND(ID_FIRMA_OTVOR, &CKnihaJazdDlg::OnFirmaOtvor)
     ON_COMMAND(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnFirmaZmaz)
     ON_COMMAND(ID_FIRMA_NOVA, &CKnihaJazdDlg::OnFirmaNova)
@@ -40,16 +40,14 @@ BEGIN_MESSAGE_MAP(CKnihaJazdDlg, CDialog)
     ON_COMMAND(ID_FIRMA_KONIEC, &CKnihaJazdDlg::OnFirmaKoniec)
     ON_UPDATE_COMMAND_UI(ID_FIRMA_VLASTNOSTI, &CKnihaJazdDlg::OnUpdateFirmaVlastnosti)
     ON_UPDATE_COMMAND_UI(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnUpdateFirmaZmaz)
-    //Auto
+  //Auto
 	ON_COMMAND(ID_AUTO_OTVOR, &CKnihaJazdDlg::OnAutoOtvor)
     ON_COMMAND(ID_AUTO_NOVE, &CKnihaJazdDlg::OnAutoNove)
-	/*    ON_COMMAND(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnFirmaZmaz)
-    ON_COMMAND(ID_FIRMA_VLASTNOSTI, &CKnihaJazdDlg::OnFirmaVlastnosti)
-    ON_COMMAND(ID_FIRMA_KONIEC, &CKnihaJazdDlg::OnFirmaKoniec)
-    ON_UPDATE_COMMAND_UI(ID_FIRMA_VLASTNOSTI, &CKnihaJazdDlg::OnUpdateFirmaVlastnosti)
-    ON_UPDATE_COMMAND_UI(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnUpdateFirmaZmaz)*/
-	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_AUTA, &CKnihaJazdDlg::OnLvnItemChangedListAuta)
-    ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LIST_AUTA, &CKnihaJazdDlg::OnLvnItemActivateListAuta)
+	ON_COMMAND(ID_AUTO_ZMAZ, &CKnihaJazdDlg::OnAutoZmaz)
+    ON_COMMAND(ID_AUTO_VLASTNOSTI, &CKnihaJazdDlg::OnAutoVlastnosti)
+    ON_UPDATE_COMMAND_UI(ID_AUTO_VLASTNOSTI, &CKnihaJazdDlg::OnUpdateAutoVlastnosti)
+    ON_UPDATE_COMMAND_UI(ID_AUTO_ZMAZ, &CKnihaJazdDlg::OnUpdateAutoZmaz)
+	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LIST_AUTA, &CKnihaJazdDlg::OnLvnItemActivateListAuta)
 END_MESSAGE_MAP()
 
 BOOL CKnihaJazdDlg::OnInitDialog()
@@ -170,18 +168,19 @@ BOOL CKnihaJazdDlg::OnInitDialog()
     return TRUE;
 }
 
-/*void CKnihaJazdDlg::OnOK()
-{
-    // Ziadny kod - zablokujeme tym stlacenie Enter
-}*/
-
 void CKnihaJazdDlg::OnOK()
 {
     int item = m_ZoznamAut.GetSelectionMark();
     if (item != -1)
     {
         m_IdAuta = (int)m_ZoznamAut.GetItemData(item);
-        CDialog::OnOK();
+		CVyberCestyDlg dlg;
+		dlg.SetKmSadzba(m_KmSadzba);
+        if (dlg.DoModal() == IDOK)
+			NacitanieAut();
+		else
+			NacitanieAut();
+//		CDialog::OnOK();
     }
 }
 
@@ -293,7 +292,9 @@ void CKnihaJazdDlg::NacitanieAut()
 		if (rs.m_FId == m_IdFirmy)
 		{
 			int iItem = m_ZoznamAut.InsertItem(m_ZoznamAut.GetItemCount(), rs.m_ASpz);
+			m_ZoznamAut.SetItemData(iItem, rs.m_AId);
 			m_ZoznamAut.SetItem(iItem, 1, LVIF_TEXT, rs.m_ATyp, 0, 0, 0, NULL);
+			m_KmSadzba = rs.m_AKmSadzba;
 			transf.Format(_T("%3.2f"), rs.m_AKmSadzba);
 			m_ZoznamAut.SetItem(iItem, 2, LVIF_TEXT, transf, 0, 0, 0, NULL);
 			transf.Format(_T("%3.2f"), rs.m_APriemernaSpotreba);
@@ -322,15 +323,10 @@ void CKnihaJazdDlg::OnUpdateFirmaZmaz(CCmdUI *pCmdUI)
     pCmdUI->Enable(m_IdFirmy != 0);
 }
 
-void CKnihaJazdDlg::OnUpdateAutoVlastnosti(CCmdUI *pCmdUI)
-{
-    pCmdUI->Enable(m_IdAuta != 0);
-}
-
 void CKnihaJazdDlg::OnAutoOtvor()
 {
-    CVyberCestyDlg dlg(this);
-    dlg.DoModal();
+	OnOK();
+
 	NacitanieAut();
 }
 
@@ -341,6 +337,7 @@ void CKnihaJazdDlg::OnAutoZmaz()
 	int item = m_ZoznamAut.GetSelectionMark();
     if (item != -1)
 		m_Auto = m_ZoznamAut.GetItemText(item,0);
+	m_IdAuta = (int)m_ZoznamAut.GetItemData(item);
 
     str.Format(_T("Naozaj chcete vymaza auto %s a všetky jeho cesty?"), m_Auto);
 
@@ -370,13 +367,35 @@ void CKnihaJazdDlg::OnAutoNove()
 	NacitanieAut();
 }
 
-void CKnihaJazdDlg::OnLvnItemChangedListAuta(NMHDR *pNMHDR, LRESULT *pResult)
+void CKnihaJazdDlg::OnAutoVlastnosti()
 {
-    *pResult = 0;
+	int item = m_ZoznamAut.GetSelectionMark();
+    if (item != -1)
+	{
+        m_IdAuta = (int)m_ZoznamAut.GetItemData(item);	
+		CAutoDlg dlg;
+		dlg.SetParamsF(m_IdFirmy);
+		dlg.SetParamsA(m_IdAuta);
+
+		if (dlg.DoModal() == IDOK)
+		{
+			NacitanieAut();
+		}	
+	}
 }
 
 void CKnihaJazdDlg::OnLvnItemActivateListAuta(NMHDR *pNMHDR, LRESULT *pResult)
 {
     OnOK();
     *pResult = 0;
+}
+
+void CKnihaJazdDlg::OnUpdateAutoZmaz(CCmdUI *pCmdUI)
+{
+    pCmdUI->Enable(m_IdAuta != 0);
+}
+
+void CKnihaJazdDlg::OnUpdateAutoVlastnosti(CCmdUI *pCmdUI)
+{
+    pCmdUI->Enable(m_IdAuta != 0);
 }

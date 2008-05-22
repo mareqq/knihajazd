@@ -56,7 +56,7 @@ BOOL CFirmaDlg::OnInitDialog()
     return TRUE;
 }
 
-void CFirmaDlg::SetParams(int idFirmy)
+void CFirmaDlg::SetParams(long idFirmy)
 {
     m_IdFirmy = idFirmy;
 }

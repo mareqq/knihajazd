@@ -32,8 +32,11 @@
 #define IDC_EDIT_STRAVNE                1032
 #define IDC_EDIT_OSTATNE                1033
 #define IDC_EDIT_POCSTAV                1034
-#define IDC_EDIT_NAKLADY                1036
 #define IDC_EDIT_SPOLU                  1036
+#define IDC_BTNPRIDAJ                   1037
+#define IDC_BTNUPRAV                    1038
+#define IDC_BUTTON3                     1039
+#define IDC_BTNZMAZ                     1039
 #define ID_FIRMA_ZMAZ                   32774
 #define ID_FIRMA_KONIEC                 32775
 #define ID_FIRMA_VLASTNOSTI             32777
@@ -74,7 +77,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         32786
-#define _APS_NEXT_CONTROL_VALUE         1037
+#define _APS_NEXT_CONTROL_VALUE         1040
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

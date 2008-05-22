@@ -5,8 +5,8 @@ class CCestaRecordset : public CRecordset
 	DECLARE_DYNAMIC(CCestaRecordset)
 
 public:
+	COleDateTime m_CDatum;	
 	long m_AId;
-	COleDateTime m_CDatum;
 	CString m_CCiel;
 	CString m_CUcel;
 	double m_CPocetKm;

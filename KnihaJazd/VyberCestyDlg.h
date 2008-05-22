@@ -18,7 +18,7 @@ public:
 	enum { IDD = IDD_VYBERCESTYDLG };
 
     COleDateTime GetVybratyDatum() { return m_VybratyDatum; }
-	void SetKmSadzba(int KmSadzba);
+	void SetKmSadzba(double KmSadzba);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -33,7 +33,9 @@ protected:
 
 protected:
 	COleDateTime m_VybratyDatum;
-    int m_IdAuta; // ID auta, s ktorym pracujeme
+    long m_IdAuta; // ID auta, s ktorym pracujeme
 	double m_Spolu;
-	int m_KmSadzba;
+	double m_KmSadzba;
+public:
+	afx_msg void OnBnClickedBtnpridaj();
 };
