@@ -58,7 +58,7 @@ void CFirmaRecordset::SetSQLNacitanieKonkretnejFirmy(long fIdParam)
     m_strSQL = _T("SELECT * FROM [firma]");
     m_strFilter = _T("[f_id] = ?");
     m_strSort = _T("");
-
+							
     m_FIdParam = fIdParam;
 
     m_nFields = 6;

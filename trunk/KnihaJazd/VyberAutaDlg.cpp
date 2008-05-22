@@ -41,7 +41,7 @@ BOOL CVyberAutaDlg::OnInitDialog()
     {
         int iItem = m_ZoznamAut.InsertItem(m_ZoznamAut.GetItemCount(), rs.m_ATyp);
         m_ZoznamFiriem.SetItemData(iItem, rs.m_AId);
-        m_ZoznamFiriem.SetItem(iItem, 1, LVIF_TEXT, rs.mAFSpz, 0, 0, 0, NULL);
+        m_ZoznamFiriem.SetItem(iItem, 1, LVIF_TEXT, rs.mASpz, 0, 0, 0, NULL);
 
         rs.MoveNext();
     }

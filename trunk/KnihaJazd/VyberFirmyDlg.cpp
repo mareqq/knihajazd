@@ -42,6 +42,7 @@ BOOL CVyberFirmyDlg::OnInitDialog()
     // Data
     CFirmaRecordset rs(theApp.GetDB());
     rs.Open();
+
     while (!rs.IsEOF())
     {
         int iItem = m_ZoznamFiriem.InsertItem(m_ZoznamFiriem.GetItemCount(), rs.m_FNazov);

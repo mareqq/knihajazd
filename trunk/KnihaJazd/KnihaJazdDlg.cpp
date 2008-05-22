@@ -5,6 +5,7 @@
 #include "FirmaRecordset.h"
 #include "FirmaDlg.h"
 #include "VyberFirmyDlg.h"
+#include "AutoDlg.h"
 #include "VyberAutaDlg.h"
 #include "VyberCestyDlg.h"
 #include "AutoRecordset.h"
@@ -19,26 +20,36 @@ CKnihaJazdDlg::CKnihaJazdDlg(CWnd* pParent)
     , m_Firma(_T(""))
 {
     m_IdFirmy = 0;
+	m_Auto = "";
 }
 
 void CKnihaJazdDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
     DDX_Text(pDX, IDC_STATIC_FIRMA, m_Firma);
-    DDX_Control(pDX, IDC_LIST_AUTA, m_ZoznamAut);
+    DDX_Control(pDX, IDC_LIST_AUTA, CKnihaJazdDlg::m_ZoznamAut);
     DDX_Control(pDX, IDC_STATIC_FIRMA, m_FirmaCtrl);
 }
 
 BEGIN_MESSAGE_MAP(CKnihaJazdDlg, CDialog)
-    ON_COMMAND(ID_FIRMA_OTVOR, &CKnihaJazdDlg::OnFirmaOtvor)
+    //Firma
+	ON_COMMAND(ID_FIRMA_OTVOR, &CKnihaJazdDlg::OnFirmaOtvor)
     ON_COMMAND(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnFirmaZmaz)
     ON_COMMAND(ID_FIRMA_NOVA, &CKnihaJazdDlg::OnFirmaNova)
     ON_COMMAND(ID_FIRMA_VLASTNOSTI, &CKnihaJazdDlg::OnFirmaVlastnosti)
     ON_COMMAND(ID_FIRMA_KONIEC, &CKnihaJazdDlg::OnFirmaKoniec)
     ON_UPDATE_COMMAND_UI(ID_FIRMA_VLASTNOSTI, &CKnihaJazdDlg::OnUpdateFirmaVlastnosti)
     ON_UPDATE_COMMAND_UI(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnUpdateFirmaZmaz)
-	ON_BN_CLICKED(IDC_BtnVyberAuta, &CKnihaJazdDlg::OnBnClickedBtnvyberauta)
-	ON_BN_CLICKED(IDC_BtnVyberCesty, &CKnihaJazdDlg::OnBnClickedBtnvybercesty)
+    //Auto
+	ON_COMMAND(ID_AUTO_OTVOR, &CKnihaJazdDlg::OnAutoOtvor)
+    ON_COMMAND(ID_AUTO_NOVE, &CKnihaJazdDlg::OnAutoNove)
+	/*    ON_COMMAND(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnFirmaZmaz)
+    ON_COMMAND(ID_FIRMA_VLASTNOSTI, &CKnihaJazdDlg::OnFirmaVlastnosti)
+    ON_COMMAND(ID_FIRMA_KONIEC, &CKnihaJazdDlg::OnFirmaKoniec)
+    ON_UPDATE_COMMAND_UI(ID_FIRMA_VLASTNOSTI, &CKnihaJazdDlg::OnUpdateFirmaVlastnosti)
+    ON_UPDATE_COMMAND_UI(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnUpdateFirmaZmaz)*/
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST_AUTA, &CKnihaJazdDlg::OnLvnItemChangedListAuta)
+    ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LIST_AUTA, &CKnihaJazdDlg::OnLvnItemActivateListAuta)
 END_MESSAGE_MAP()
 
 BOOL CKnihaJazdDlg::OnInitDialog()
@@ -148,16 +159,30 @@ BOOL CKnihaJazdDlg::OnInitDialog()
 
     // Zoznam aut
     m_ZoznamAut.SetExtendedStyle(LVS_EX_FULLROWSELECT);
-    m_ZoznamAut.InsertColumn(0, _T("ZnaËka"), LVCFMT_LEFT, 100);
-    m_ZoznamAut.InsertColumn(1, _T("Typ"), LVCFMT_LEFT, 200);
+    m_ZoznamAut.InsertColumn(0, _T("ZnaËka"), LVCFMT_LEFT, 75);
+    m_ZoznamAut.InsertColumn(1, _T("Typ"), LVCFMT_LEFT, 150);
+	m_ZoznamAut.InsertColumn(2, _T("Km sadzba"), LVCFMT_LEFT, 50);
+	m_ZoznamAut.InsertColumn(3, _T("Priemerna spotreba"), LVCFMT_LEFT, 50);
+	m_ZoznamAut.InsertColumn(4, _T("Rok"), LVCFMT_LEFT, 50);
 
-    UpdateData(FALSE);
+	NacitanieAut();
+
     return TRUE;
 }
 
-void CKnihaJazdDlg::OnOK()
+/*void CKnihaJazdDlg::OnOK()
 {
     // Ziadny kod - zablokujeme tym stlacenie Enter
+}*/
+
+void CKnihaJazdDlg::OnOK()
+{
+    int item = m_ZoznamAut.GetSelectionMark();
+    if (item != -1)
+    {
+        m_IdAuta = (int)m_ZoznamAut.GetItemData(item);
+        CDialog::OnOK();
+    }
 }
 
 void CKnihaJazdDlg::OnCancel()
@@ -182,11 +207,14 @@ void CKnihaJazdDlg::OnFirmaOtvor()
         m_IdFirmy = dlg.GetIdVybratejFirmy();
         AktualizujPopisFirmy();
     }
+
+	NacitanieAut();
 }
 
 void CKnihaJazdDlg::OnFirmaZmaz()
 {
-    CString str;
+	CString str;
+
     str.Format(_T("Naozaj chcete vymazaù firmu %s a vöetky jej aut· a cesty?"), m_Firma);
 
     if (AfxMessageBox(str, MB_YESNO) == IDYES)
@@ -235,8 +263,8 @@ void CKnihaJazdDlg::AktualizujPopisFirmy()
 {
     if (m_IdFirmy == 0)
     {
-        m_Firma = _T("éiadna firma nebola vybran·.")
-            _T("  Vyberte firmu voæbou Firma > Vyber alebo priadjte nov˙ voæbou Firma > Nov·.");
+        m_Firma = _T("éiadna firma nebola vybrat·")
+            _T(", vyberte firmu voæbou  \"Firma -> Vyber\"  alebo pridajte nov˙ voæbou  \"Firma -> Nov·\"");
     }
     else
     {
@@ -251,6 +279,39 @@ void CKnihaJazdDlg::AktualizujPopisFirmy()
     UpdateData(FALSE);
 }
 
+void CKnihaJazdDlg::NacitanieAut()
+{
+	CString transf;
+	
+	m_ZoznamAut.DeleteAllItems();
+
+	CAutoRecordset rs(theApp.GetDB());
+
+	rs.Open();
+	while (!rs.IsEOF())
+    {
+		if (rs.m_FId == m_IdFirmy)
+		{
+			int iItem = m_ZoznamAut.InsertItem(m_ZoznamAut.GetItemCount(), rs.m_ASpz);
+			m_ZoznamAut.SetItem(iItem, 1, LVIF_TEXT, rs.m_ATyp, 0, 0, 0, NULL);
+			transf.Format(_T("%3.2f"), rs.m_AKmSadzba);
+			m_ZoznamAut.SetItem(iItem, 2, LVIF_TEXT, transf, 0, 0, 0, NULL);
+			transf.Format(_T("%3.2f"), rs.m_APriemernaSpotreba);
+			m_ZoznamAut.SetItem(iItem, 3, LVIF_TEXT, transf, 0, 0, 0, NULL);
+			transf.Format(_T("%d"), rs.m_ARok);
+			m_ZoznamAut.SetItem(iItem, 4, LVIF_TEXT, transf, 0, 0, 0, NULL);
+		}
+		rs.MoveNext();
+	}
+    rs.Close();
+}
+
+void CKnihaJazdDlg::AktualizujOkno()
+{
+    int item = m_ZoznamAut.GetSelectionMark();
+    //m_TlacidloOk.EnableWindow(item != -1);
+}
+
 void CKnihaJazdDlg::OnUpdateFirmaVlastnosti(CCmdUI *pCmdUI)
 {
     pCmdUI->Enable(m_IdFirmy != 0);
@@ -261,14 +322,61 @@ void CKnihaJazdDlg::OnUpdateFirmaZmaz(CCmdUI *pCmdUI)
     pCmdUI->Enable(m_IdFirmy != 0);
 }
 
-void CKnihaJazdDlg::OnBnClickedBtnvyberauta()
+void CKnihaJazdDlg::OnUpdateAutoVlastnosti(CCmdUI *pCmdUI)
 {
-	CVyberAutaDlg dlg(this);
-	dlg.DoModal();
+    pCmdUI->Enable(m_IdAuta != 0);
 }
 
-void CKnihaJazdDlg::OnBnClickedBtnvybercesty()
+void CKnihaJazdDlg::OnAutoOtvor()
 {
-	CVyberCestyDlg dlg(this);
-	dlg.DoModal();
+    CVyberCestyDlg dlg(this);
+    dlg.DoModal();
+	NacitanieAut();
+}
+
+void CKnihaJazdDlg::OnAutoZmaz()
+{
+    CString str;
+
+	int item = m_ZoznamAut.GetSelectionMark();
+    if (item != -1)
+		m_Auto = m_ZoznamAut.GetItemText(item,0);
+
+    str.Format(_T("Naozaj chcete vymazaù auto %s a vöetky jeho cesty?"), m_Auto);
+
+    if (AfxMessageBox(str, MB_YESNO) == IDYES)
+    {
+        // Zmazanie auta
+        CAutoRecordset rs(theApp.GetDB());
+        rs.SetSQLNacitanieKonkretnehoAuta(m_IdAuta);
+        rs.Open();
+        rs.Delete();
+        rs.Close();
+
+        m_IdAuta = 0;
+        NacitanieAut();
+    }
+}
+
+void CKnihaJazdDlg::OnAutoNove()
+{
+    CAutoDlg dlg;
+
+	dlg.SetParamsF(m_IdFirmy);
+
+    if (dlg.DoModal() == IDOK)
+        m_IdAuta = dlg.GetIdAuta();
+
+	NacitanieAut();
+}
+
+void CKnihaJazdDlg::OnLvnItemChangedListAuta(NMHDR *pNMHDR, LRESULT *pResult)
+{
+    *pResult = 0;
+}
+
+void CKnihaJazdDlg::OnLvnItemActivateListAuta(NMHDR *pNMHDR, LRESULT *pResult)
+{
+    OnOK();
+    *pResult = 0;
 }
