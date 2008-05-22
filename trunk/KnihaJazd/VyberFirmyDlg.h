@@ -16,7 +16,7 @@ public:
 
 	enum { IDD = IDD_VYBERFIRMYDLG };
 
-    int GetIdVybratejFirmy() { return m_IdVybratejFirmy; }
+    long GetIdVybratejFirmy() { return m_IdVybratejFirmy; }
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -30,5 +30,5 @@ protected:
     void AktualizujOkno();
 
 protected:
-    int m_IdVybratejFirmy;
+    long m_IdVybratejFirmy;
 };

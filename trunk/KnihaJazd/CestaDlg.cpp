@@ -71,7 +71,7 @@ BOOL CCestaDlg::OnInitDialog()
     return TRUE;
 }
 
-void CCestaDlg::SetParamsA(int idAuta)
+void CCestaDlg::SetParamsA(long idAuta)
 {
     m_IdAuta = idAuta;
 }
@@ -99,12 +99,11 @@ void CCestaDlg::OnOK()
         CCestaRecordset rs(theApp.GetDB());
         rs.SetSQLNacitanieMaximalnehoDatumu(m_IdAuta, m_Datum);
         rs.Open();
-//        m_Datum = rs.m_CDatum + 1;
         COleDateTimeSpan m_Datum = m_Datum + pomDatum;
 
 		rs.Close();
 
-        // Pridavame firmu
+        // Pridavame cestu
         m_rsCesta.AddNew();
         m_rsCesta.m_AId = m_IdAuta;
 
