@@ -54,7 +54,7 @@ BOOL CVyberCestyDlg::OnInitDialog()
 
     while (!rs.IsEOF())
     {
-//		if (rs.m_AId == m_IdAuta)
+		if (rs.m_AId == m_IdAuta)
 		{	
 //			str.Format("%0d.%0d.%4d", datum.GetDay(), datum.GetMonth(), datum.GetYear());
 //			transf = datum.Format(_T("%d.%m. %Y"));
@@ -66,16 +66,16 @@ BOOL CVyberCestyDlg::OnInitDialog()
 			int iItem = m_ZoznamCiest.InsertItem(m_ZoznamCiest.GetItemCount(), transf);
 			m_ZoznamCiest.SetItemData(iItem, rs.m_AId);
 			m_ZoznamCiest.SetItem(iItem, 1, LVIF_TEXT, rs.m_CCiel, 0, 0, 0, NULL);
-			transf.Format(_T("%d"), rs.m_CPocStav);
+			transf.Format(_T("%.0f"), rs.m_CPocStav);
 			m_ZoznamCiest.SetItem(iItem, 2, LVIF_TEXT, transf, 0, 0, 0, NULL);
-			transf.Format(_T("%d"), rs.m_CKonStav);
+			transf.Format(_T("%.0f"), rs.m_CKonStav);
 			m_ZoznamCiest.SetItem(iItem, 3, LVIF_TEXT, transf, 0, 0, 0, NULL);
-			transf.Format(_T("%d"), rs.m_CPocetKm);
+			transf.Format(_T("%.0f"), rs.m_CPocetKm);
 			m_ZoznamCiest.SetItem(iItem, 4, LVIF_TEXT, transf, 0, 0, 0, NULL);
-			transf.Format(_T("%d"), rs.m_CTankovane);
+			transf.Format(_T("%.0f"), rs.m_CTankovane);
 			m_ZoznamCiest.SetItem(iItem, 5, LVIF_TEXT, transf, 0, 0, 0, NULL);
 			m_Spolu = rs.m_COstatne + rs.m_CStravne + m_KmSadzba;	
-			transf.Format(_T("%d"), m_Spolu);
+			transf.Format(_T("%.2f"), m_Spolu);
 			m_ZoznamCiest.SetItem(iItem, 6, LVIF_TEXT, transf, 0, 0, 0, NULL);
 		}
         rs.MoveNext();
@@ -89,6 +89,11 @@ BOOL CVyberCestyDlg::OnInitDialog()
 void CVyberCestyDlg::SetKmSadzba(double KmSadzba)
 {
 	m_KmSadzba = KmSadzba;
+}
+
+void CVyberCestyDlg::SetIdAuta(long IdAuto)
+{
+	m_IdAuta = IdAuto;
 }
 
 void CVyberCestyDlg::OnOK()	//dorobit

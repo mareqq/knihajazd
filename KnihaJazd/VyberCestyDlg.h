@@ -19,6 +19,7 @@ public:
 
     COleDateTime GetVybratyDatum() { return m_VybratyDatum; }
 	void SetKmSadzba(double KmSadzba);
+	void SetIdAuta(long IdAuto);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
