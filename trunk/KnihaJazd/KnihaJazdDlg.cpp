@@ -175,6 +175,7 @@ void CKnihaJazdDlg::OnOK()
     {
         m_IdAuta = (int)m_ZoznamAut.GetItemData(item);
 		CVyberCestyDlg dlg;
+		dlg.SetIdAuta(m_IdAuta);
 		dlg.SetKmSadzba(m_KmSadzba);
         if (dlg.DoModal() == IDOK)
 			NacitanieAut();
