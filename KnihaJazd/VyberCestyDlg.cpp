@@ -56,13 +56,19 @@ BOOL CVyberCestyDlg::OnInitDialog()
     {
 		if (rs.m_AId == m_IdAuta)
 		{	
-//			str.Format("%0d.%0d.%4d", datum.GetDay(), datum.GetMonth(), datum.GetYear());
-//			transf = datum.Format(_T("%d.%m. %Y"));
 			datum = rs.m_CDatum;
-			den = datum.GetDay();
-			mesiac = datum.GetMonth();
-			rok = datum.GetYear();
-//			transf.Construct();
+			/*transf.Format("%d.%d. %d",datum.GetDay(),datum.GetMonth(),datum.GetYear());*/
+			CString strDatum;
+			strDatum.Format("%i", (int)datum.GetDay());
+
+			/*COleDateTime dt;
+			dt.ParseDateTime( rs.m_C1ExpirationDate + "00:00:00",0 );
+			CString dateString = dt.Format( VAR_DATEVALUEONLY );*/
+
+			/*tempTime = rs.m_C1ExpirationDate; 
+			CString dateString;
+			dateString.Format("%d/%d/%d",tempTime.GetYear(),tempTime.GetMonth(),tempTime.GetDay());*/
+			
 			int iItem = m_ZoznamCiest.InsertItem(m_ZoznamCiest.GetItemCount(), transf);
 			m_ZoznamCiest.SetItemData(iItem, rs.m_AId);
 			m_ZoznamCiest.SetItem(iItem, 1, LVIF_TEXT, rs.m_CCiel, 0, 0, 0, NULL);
