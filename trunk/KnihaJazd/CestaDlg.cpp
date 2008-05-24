@@ -89,7 +89,7 @@ void CCestaDlg::SetParamsKS(float KmSadzba)
 void CCestaDlg::OnOK()
 {
 	COleDateTime pomDatum;
-	pomDatum.SetDate(0,0,1);
+	pomDatum.SetDate(2000,1,1);
 
     UpdateData(TRUE);
 
