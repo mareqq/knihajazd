@@ -264,7 +264,7 @@ void CKnihaJazdDlg::AktualizujPopisFirmy()
     if (m_IdFirmy == 0)
     {
         m_Firma = _T("Žiadna firma nebola vybratá")
-            _T(", vyberte firmu vo¾bou  \"Firma -> Vyber\"  alebo pridajte novú vo¾bou  \"Firma -> Nová\"");
+            _T(", vyberte firmu vo¾bou  \"Firma > Otvor\"  alebo pridajte novú vo¾bou  \"Firma > Nová\"");
     }
     else
     {
