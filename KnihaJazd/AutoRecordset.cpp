@@ -13,11 +13,8 @@ CAutoRecordset::CAutoRecordset(CDatabase* pdb)
 	m_ASpz = "";
 	m_AKmSadzba = 0.0;
 	m_APriemernaSpotreba = 0.0;
-	m_nFields = 7;
 
 	m_nDefaultType = dynaset;
-
-	SetSQLNacitanieZoznamuAut();
 }
 
 CString CAutoRecordset::GetDefaultSQL()
@@ -27,9 +24,10 @@ CString CAutoRecordset::GetDefaultSQL()
 
 void CAutoRecordset::DoFieldExchange(CFieldExchange* pFX)
 {
+	// Stlpce
 	pFX->SetFieldType(CFieldExchange::outputColumn);
 	RFX_Long(pFX, _T("[a_id]"), m_AId);
-    if (m_nFields > 1)
+	if (m_TypSQL != ETS_NACITANIE_MAXIMALNEHO_ID)
     {
 	    RFX_Long(pFX, _T("[a_rok]"), m_ARok);
 	    RFX_Long(pFX, _T("[f_id]"), m_FId);
@@ -39,25 +37,37 @@ void CAutoRecordset::DoFieldExchange(CFieldExchange* pFX)
 		RFX_Text(pFX, _T("[a_typ]"), m_ATyp);
 	}
 
-    if (m_nParams > 0)
+	// Parametre
+	if (m_TypSQL == ETS_NACITANIE_ZOZNAMU_AUT)
+	{
+        pFX->SetFieldType(CFieldExchange::inputParam);
+        RFX_Long(pFX, _T("[f_id]"), m_FIdParam);
+	}
+	else if (m_TypSQL == ETS_NACITANIE_KONKRETNETHO_AUTA)
     {
         pFX->SetFieldType(CFieldExchange::inputParam);
         RFX_Long(pFX, _T("[a_id]"), m_AIdParam);
     }
 }
 
-void CAutoRecordset::SetSQLNacitanieZoznamuAut()
+void CAutoRecordset::SetSQLNacitanieZoznamuAut(long fIdParam)
 {
+	m_TypSQL = ETS_NACITANIE_ZOZNAMU_AUT;
+
     m_strSQL = _T("SELECT * FROM [auto]");
-	m_strFilter = _T("");
-    m_strSort = _T("[a_spz], [a_typ], [a_km_sadzba], [a_priemerna_spotreba], [a_rok]");
+	m_strFilter = _T("[f_id] = ?");
+    m_strSort = _T("[a_spz]");
+
+	m_FIdParam = fIdParam;
 
     m_nFields = 7;
-    m_nParams = 0;
+    m_nParams = 1;
 }
 
 void CAutoRecordset::SetSQLNacitanieKonkretnehoAuta(long aIdParam)
 {
+	m_TypSQL = ETS_NACITANIE_KONKRETNETHO_AUTA;
+
     m_strSQL = _T("SELECT * FROM [auto]");
 	m_strFilter = _T("[a_id] = ?");
     m_strSort = _T("");
@@ -70,6 +80,8 @@ void CAutoRecordset::SetSQLNacitanieKonkretnehoAuta(long aIdParam)
 
 void CAutoRecordset::SetSQLNacitanieMaximalnehoId()
 {
+	m_TypSQL = ETS_NACITANIE_MAXIMALNEHO_ID;
+
     m_strSQL = _T("SELECT MAX([a_id]) FROM [auto]");
     m_strFilter = _T("");
     m_strSort = _T("");

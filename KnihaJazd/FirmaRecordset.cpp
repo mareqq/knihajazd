@@ -27,7 +27,7 @@ void CFirmaRecordset::DoFieldExchange(CFieldExchange* pFX)
 {
 	pFX->SetFieldType(CFieldExchange::outputColumn);
 	RFX_Long(pFX, _T("[f_id]"), m_FId);
-    if (m_nFields > 1)
+	if (m_TypSQL != ETS_NACITANIE_MAXIMALNEHO_ID)
     {
 	    RFX_Text(pFX, _T("[f_nazov]"), m_FNazov);
 	    RFX_Text(pFX, _T("[f_ulica]"), m_FUlica);
@@ -36,7 +36,7 @@ void CFirmaRecordset::DoFieldExchange(CFieldExchange* pFX)
 	    RFX_Text(pFX, _T("[f_psc]"), m_FPsc);
     }
 
-    if (m_nParams > 0)
+	if (m_TypSQL == ETS_NACITANIE_KONKRETNEJ_FIRMY)
     {
         pFX->SetFieldType(CFieldExchange::inputParam);
         RFX_Long(pFX, _T("[f_id]"), m_FIdParam);
@@ -45,6 +45,8 @@ void CFirmaRecordset::DoFieldExchange(CFieldExchange* pFX)
 
 void CFirmaRecordset::SetSQLNacitanieZoznamuFiriem()
 {
+	m_TypSQL = ETS_NACITANIE_ZOZNAMU_FIRIEM;
+
     m_strSQL = _T("SELECT * FROM [firma]");
     m_strFilter = _T("");
     m_strSort = _T("[f_nazov], [f_mesto], [f_psc], [f_ulica], [f_cislo]");
@@ -55,6 +57,8 @@ void CFirmaRecordset::SetSQLNacitanieZoznamuFiriem()
 
 void CFirmaRecordset::SetSQLNacitanieKonkretnejFirmy(long fIdParam)
 {
+	m_TypSQL = ETS_NACITANIE_KONKRETNEJ_FIRMY;
+
     m_strSQL = _T("SELECT * FROM [firma]");
     m_strFilter = _T("[f_id] = ?");
     m_strSort = _T("");
@@ -67,6 +71,8 @@ void CFirmaRecordset::SetSQLNacitanieKonkretnejFirmy(long fIdParam)
 
 void CFirmaRecordset::SetSQLNacitanieMaximalnehoId()
 {
+	m_TypSQL = ETS_NACITANIE_MAXIMALNEHO_ID;
+
     m_strSQL = _T("SELECT MAX([f_id]) FROM [firma]");
     m_strFilter = _T("");
     m_strSort = _T("");

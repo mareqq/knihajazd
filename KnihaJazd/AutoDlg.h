@@ -19,8 +19,7 @@ public:
 
 	enum { IDD = IDD_AUTODLG };
 
-	void SetParamsA(long idAuta);
-	void SetParamsF(long idFirmy);
+	void SetParams(long idFirmy, long idAuta = 0);
 	long GetIdAuta() { return m_IdAuta; }
 
 protected:

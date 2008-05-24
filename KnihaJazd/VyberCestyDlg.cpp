@@ -10,7 +10,7 @@ IMPLEMENT_DYNAMIC(CVyberCestyDlg, CDialog)
 CVyberCestyDlg::CVyberCestyDlg(CWnd* pParent)
 	: CDialog(CVyberCestyDlg::IDD, pParent)
 {
-	m_VybratyDatum.SetDateTime(0,0,0,0,0,0);
+	m_VybratyDatum.SetDateTime(0, 0, 0, 0, 0, 0);
 }
 
 CVyberCestyDlg::~CVyberCestyDlg()
@@ -21,7 +21,6 @@ void CVyberCestyDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_CESTA, CVyberCestyDlg::m_ZoznamCiest);
-    DDX_Control(pDX, IDOK, m_TlacidloOk);
 }
 
 BEGIN_MESSAGE_MAP(CVyberCestyDlg, CDialog)
@@ -33,10 +32,6 @@ END_MESSAGE_MAP()
 BOOL CVyberCestyDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-
-	CString transf;
-	int den, mesiac, rok;
-	COleDateTime datum;
 
     // Zoznam ciest
     m_ZoznamCiest.SetExtendedStyle(LVS_EX_FULLROWSELECT);
@@ -50,41 +45,40 @@ BOOL CVyberCestyDlg::OnInitDialog()
 
     // Data
     CCestaRecordset rs(theApp.GetDB());
+	rs.SetSQLNacitanieZoznamuCiest(m_IdAuta);
     rs.Open();
-
     while (!rs.IsEOF())
     {
-		if (rs.m_AId == m_IdAuta)
-		{	
-			datum = rs.m_CDatum;
-			/*transf.Format("%d.%d. %d",datum.GetDay(),datum.GetMonth(),datum.GetYear());*/
-			CString strDatum;
-			strDatum.Format("%i", (int)datum.GetDay());
+		CString transf;
 
-			/*COleDateTime dt;
-			dt.ParseDateTime( rs.m_C1ExpirationDate + "00:00:00",0 );
-			CString dateString = dt.Format( VAR_DATEVALUEONLY );*/
+		COleDateTime datum = rs.m_CDatum;
+		transf = datum.Format(_T("%d.%m.%Y"));
+		int iItem = m_ZoznamCiest.InsertItem(m_ZoznamCiest.GetItemCount(), transf);
 
-			/*tempTime = rs.m_C1ExpirationDate; 
-			CString dateString;
-			dateString.Format("%d/%d/%d",tempTime.GetYear(),tempTime.GetMonth(),tempTime.GetDay());*/
-			
-			int iItem = m_ZoznamCiest.InsertItem(m_ZoznamCiest.GetItemCount(), transf);
-			m_ZoznamCiest.SetItemData(iItem, rs.m_AId);
-			m_ZoznamCiest.SetItem(iItem, 1, LVIF_TEXT, rs.m_CCiel, 0, 0, 0, NULL);
-			transf.Format(_T("%.0f"), rs.m_CPocStav);
-			m_ZoznamCiest.SetItem(iItem, 2, LVIF_TEXT, transf, 0, 0, 0, NULL);
-			transf.Format(_T("%.0f"), rs.m_CKonStav);
-			m_ZoznamCiest.SetItem(iItem, 3, LVIF_TEXT, transf, 0, 0, 0, NULL);
-			transf.Format(_T("%.0f"), rs.m_CPocetKm);
-			m_ZoznamCiest.SetItem(iItem, 4, LVIF_TEXT, transf, 0, 0, 0, NULL);
-			transf.Format(_T("%.0f"), rs.m_CTankovane);
-			m_ZoznamCiest.SetItem(iItem, 5, LVIF_TEXT, transf, 0, 0, 0, NULL);
-			m_Spolu = rs.m_COstatne + rs.m_CStravne + m_KmSadzba;	
-			transf.Format(_T("%.2f"), m_Spolu);
-			m_ZoznamCiest.SetItem(iItem, 6, LVIF_TEXT, transf, 0, 0, 0, NULL);
-		}
-        rs.MoveNext();
+		SYSTEMTIME systmDatum;
+		datum.GetAsSystemTime(systmDatum);
+		time_t tmDatum = CTime(systmDatum).GetTime();
+		m_ZoznamCiest.SetItemData(iItem, (long)tmDatum);
+
+		//
+		long lDatum = (long)m_ZoznamCiest.GetItemData(iItem);
+		COleDateTime oleDatum(lDatum);
+		//
+
+		m_ZoznamCiest.SetItem(iItem, 1, LVIF_TEXT, rs.m_CCiel, 0, 0, 0, NULL);
+		transf.Format(_T("%.0f"), rs.m_CPocStav);
+		m_ZoznamCiest.SetItem(iItem, 2, LVIF_TEXT, transf, 0, 0, 0, NULL);
+		transf.Format(_T("%.0f"), rs.m_CKonStav);
+		m_ZoznamCiest.SetItem(iItem, 3, LVIF_TEXT, transf, 0, 0, 0, NULL);
+		transf.Format(_T("%.0f"), rs.m_CPocetKm);
+		m_ZoznamCiest.SetItem(iItem, 4, LVIF_TEXT, transf, 0, 0, 0, NULL);
+		transf.Format(_T("%.0f"), rs.m_CTankovane);
+		m_ZoznamCiest.SetItem(iItem, 5, LVIF_TEXT, transf, 0, 0, 0, NULL);
+		m_Spolu = rs.m_COstatne + rs.m_CStravne + m_KmSadzba;	
+		transf.Format(_T("%.2f"), m_Spolu);
+		m_ZoznamCiest.SetItem(iItem, 6, LVIF_TEXT, transf, 0, 0, 0, NULL);
+
+		rs.MoveNext();
 	}
     rs.Close();
 
@@ -92,17 +86,13 @@ BOOL CVyberCestyDlg::OnInitDialog()
     return TRUE;
 }
 
-void CVyberCestyDlg::SetKmSadzba(double KmSadzba)
+void CVyberCestyDlg::SetParams(long idAuto, double kmSadzba)
 {
-	m_KmSadzba = KmSadzba;
+	m_IdAuta = idAuto;
+	m_KmSadzba = kmSadzba;
 }
 
-void CVyberCestyDlg::SetIdAuta(long IdAuto)
-{
-	m_IdAuta = IdAuto;
-}
-
-void CVyberCestyDlg::OnOK()	//dorobit
+void CVyberCestyDlg::OnZobraz()	//dorobit
 {
 	CString pomStr;
 
@@ -117,8 +107,6 @@ void CVyberCestyDlg::OnOK()	//dorobit
 
 void CVyberCestyDlg::AktualizujOkno()
 {
-    int item = m_ZoznamCiest.GetSelectionMark();
-    m_TlacidloOk.EnableWindow(item != -1);
 }
 
 void CVyberCestyDlg::OnLvnItemChangedListCesty(NMHDR *pNMHDR, LRESULT *pResult)

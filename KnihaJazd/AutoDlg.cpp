@@ -58,13 +58,9 @@ BOOL CAutoDlg::OnInitDialog()
     return TRUE;
 }
 
-void CAutoDlg::SetParamsF(long idFirmy)
+void CAutoDlg::SetParams(long idFirmy, long idAuta)
 {
     m_IdFirmy = idFirmy;
-}
-
-void CAutoDlg::SetParamsA(long idAuta)
-{
     m_IdAuta = idAuta;
 }
 

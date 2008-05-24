@@ -15,7 +15,6 @@ public:
 
 	long m_AIdParam;
 	long m_FIdParam;
-	long m_IdFirmy;
 
 public:
 	CAutoRecordset(CDatabase* pDatabase = NULL);
@@ -23,12 +22,19 @@ public:
 	virtual void DoFieldExchange(CFieldExchange* pFX);
 	virtual CString GetDefaultSQL();
 	
-    void SetSQLNacitanieZoznamuAut();
+    void SetSQLNacitanieZoznamuAut(long fIdParam);
     void SetSQLNacitanieKonkretnehoAuta(long aIdParam);
     void SetSQLNacitanieMaximalnehoId();
 
 protected:
     CString m_strSQL;
+
+	enum ETypSQL
+	{
+		ETS_NACITANIE_ZOZNAMU_AUT,
+		ETS_NACITANIE_KONKRETNETHO_AUTA,
+		ETS_NACITANIE_MAXIMALNEHO_ID
+	} m_TypSQL;
 };
 
 
