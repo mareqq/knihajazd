@@ -20,7 +20,6 @@ CKnihaJazdDlg::CKnihaJazdDlg(CWnd* pParent)
     , m_Firma(_T(""))
 {
     m_IdFirmy = 0;
-	m_Auto = "";
 }
 
 void CKnihaJazdDlg::DoDataExchange(CDataExchange* pDX)
@@ -32,7 +31,7 @@ void CKnihaJazdDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CKnihaJazdDlg, CDialog)
-  //Firma
+	// Firma
 	ON_COMMAND(ID_FIRMA_OTVOR, &CKnihaJazdDlg::OnFirmaOtvor)
     ON_COMMAND(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnFirmaZmaz)
     ON_COMMAND(ID_FIRMA_NOVA, &CKnihaJazdDlg::OnFirmaNova)
@@ -40,7 +39,7 @@ BEGIN_MESSAGE_MAP(CKnihaJazdDlg, CDialog)
     ON_COMMAND(ID_FIRMA_KONIEC, &CKnihaJazdDlg::OnFirmaKoniec)
     ON_UPDATE_COMMAND_UI(ID_FIRMA_VLASTNOSTI, &CKnihaJazdDlg::OnUpdateFirmaVlastnosti)
     ON_UPDATE_COMMAND_UI(ID_FIRMA_ZMAZ, &CKnihaJazdDlg::OnUpdateFirmaZmaz)
-  //Auto
+	// Auto
 	ON_COMMAND(ID_AUTO_OTVOR, &CKnihaJazdDlg::OnAutoOtvor)
     ON_COMMAND(ID_AUTO_NOVE, &CKnihaJazdDlg::OnAutoNove)
 	ON_COMMAND(ID_AUTO_ZMAZ, &CKnihaJazdDlg::OnAutoZmaz)
@@ -48,6 +47,8 @@ BEGIN_MESSAGE_MAP(CKnihaJazdDlg, CDialog)
     ON_UPDATE_COMMAND_UI(ID_AUTO_VLASTNOSTI, &CKnihaJazdDlg::OnUpdateAutoVlastnosti)
     ON_UPDATE_COMMAND_UI(ID_AUTO_ZMAZ, &CKnihaJazdDlg::OnUpdateAutoZmaz)
 	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LIST_AUTA, &CKnihaJazdDlg::OnLvnItemActivateListAuta)
+	ON_UPDATE_COMMAND_UI(ID_AUTO_OTVOR, &CKnihaJazdDlg::OnUpdateAutoOtvor)
+	ON_UPDATE_COMMAND_UI(ID_AUTO_NOVE, &CKnihaJazdDlg::OnUpdateAutoNove)
 END_MESSAGE_MAP()
 
 BOOL CKnihaJazdDlg::OnInitDialog()
@@ -173,15 +174,11 @@ void CKnihaJazdDlg::OnOK()
     int item = m_ZoznamAut.GetSelectionMark();
     if (item != -1)
     {
-        m_IdAuta = (int)m_ZoznamAut.GetItemData(item);
+        long idAuta = (int)m_ZoznamAut.GetItemData(item);
+
 		CVyberCestyDlg dlg;
-		dlg.SetIdAuta(m_IdAuta);
-		dlg.SetKmSadzba(m_KmSadzba);
-        if (dlg.DoModal() == IDOK)
-			NacitanieAut();
-		else
-			NacitanieAut();
-//		CDialog::OnOK();
+		dlg.SetParams(idAuta, m_KmSadzba);
+        dlg.DoModal();
     }
 }
 
@@ -286,23 +283,21 @@ void CKnihaJazdDlg::NacitanieAut()
 	m_ZoznamAut.DeleteAllItems();
 
 	CAutoRecordset rs(theApp.GetDB());
-
+	rs.SetSQLNacitanieZoznamuAut(m_IdFirmy);
 	rs.Open();
 	while (!rs.IsEOF())
     {
-		if (rs.m_FId == m_IdFirmy)
-		{
-			int iItem = m_ZoznamAut.InsertItem(m_ZoznamAut.GetItemCount(), rs.m_ASpz);
-			m_ZoznamAut.SetItemData(iItem, rs.m_AId);
-			m_ZoznamAut.SetItem(iItem, 1, LVIF_TEXT, rs.m_ATyp, 0, 0, 0, NULL);
-			m_KmSadzba = rs.m_AKmSadzba;
-			transf.Format(_T("%3.2f"), rs.m_AKmSadzba);
-			m_ZoznamAut.SetItem(iItem, 2, LVIF_TEXT, transf, 0, 0, 0, NULL);
-			transf.Format(_T("%3.2f"), rs.m_APriemernaSpotreba);
-			m_ZoznamAut.SetItem(iItem, 3, LVIF_TEXT, transf, 0, 0, 0, NULL);
-			transf.Format(_T("%d"), rs.m_ARok);
-			m_ZoznamAut.SetItem(iItem, 4, LVIF_TEXT, transf, 0, 0, 0, NULL);
-		}
+		int iItem = m_ZoznamAut.InsertItem(m_ZoznamAut.GetItemCount(), rs.m_ASpz);
+		m_ZoznamAut.SetItemData(iItem, rs.m_AId);
+		m_ZoznamAut.SetItem(iItem, 1, LVIF_TEXT, rs.m_ATyp, 0, 0, 0, NULL);
+		m_KmSadzba = rs.m_AKmSadzba;
+		transf.Format(_T("%3.2f"), rs.m_AKmSadzba);
+		m_ZoznamAut.SetItem(iItem, 2, LVIF_TEXT, transf, 0, 0, 0, NULL);
+		transf.Format(_T("%3.2f"), rs.m_APriemernaSpotreba);
+		m_ZoznamAut.SetItem(iItem, 3, LVIF_TEXT, transf, 0, 0, 0, NULL);
+		transf.Format(_T("%d"), rs.m_ARok);
+		m_ZoznamAut.SetItem(iItem, 4, LVIF_TEXT, transf, 0, 0, 0, NULL);
+
 		rs.MoveNext();
 	}
     rs.Close();
@@ -333,39 +328,36 @@ void CKnihaJazdDlg::OnAutoOtvor()
 
 void CKnihaJazdDlg::OnAutoZmaz()
 {
-    CString str;
-
-	int item = m_ZoznamAut.GetSelectionMark();
+    int item = m_ZoznamAut.GetSelectionMark();
     if (item != -1)
-		m_Auto = m_ZoznamAut.GetItemText(item,0);
-	m_IdAuta = (int)m_ZoznamAut.GetItemData(item);
+	{
+		CString strAuto = m_ZoznamAut.GetItemText(item, 0);
+		long idAuta = (long)m_ZoznamAut.GetItemData(item);
 
-    str.Format(_T("Naozaj chcete vymaza auto %s a všetky jeho cesty?"), m_Auto);
+		CString str;
+		str.Format(_T("Naozaj chcete vymaza auto %s a všetky jeho cesty?"), strAuto);
+		if (AfxMessageBox(str, MB_YESNO|MB_ICONQUESTION) == IDYES)
+		{
+			// Zmazanie auta
+			CAutoRecordset rs(theApp.GetDB());
+			rs.SetSQLNacitanieKonkretnehoAuta(idAuta);
+			rs.Open();
+			rs.Delete();
+			rs.Close();
 
-    if (AfxMessageBox(str, MB_YESNO) == IDYES)
-    {
-        // Zmazanie auta
-        CAutoRecordset rs(theApp.GetDB());
-        rs.SetSQLNacitanieKonkretnehoAuta(m_IdAuta);
-        rs.Open();
-        rs.Delete();
-        rs.Close();
-
-        m_IdAuta = 0;
-        NacitanieAut();
-    }
+			NacitanieAut();
+		}
+	}
 }
 
 void CKnihaJazdDlg::OnAutoNove()
 {
     CAutoDlg dlg;
-
-	dlg.SetParamsF(m_IdFirmy);
-
+	dlg.SetParams(m_IdFirmy);
     if (dlg.DoModal() == IDOK)
-        m_IdAuta = dlg.GetIdAuta();
-
-	NacitanieAut();
+	{
+		NacitanieAut();
+	}
 }
 
 void CKnihaJazdDlg::OnAutoVlastnosti()
@@ -373,11 +365,10 @@ void CKnihaJazdDlg::OnAutoVlastnosti()
 	int item = m_ZoznamAut.GetSelectionMark();
     if (item != -1)
 	{
-        m_IdAuta = (int)m_ZoznamAut.GetItemData(item);	
-		CAutoDlg dlg;
-		dlg.SetParamsF(m_IdFirmy);
-		dlg.SetParamsA(m_IdAuta);
+        long idAuta = (int)m_ZoznamAut.GetItemData(item);	
 
+		CAutoDlg dlg;
+		dlg.SetParams(m_IdFirmy, idAuta);
 		if (dlg.DoModal() == IDOK)
 		{
 			NacitanieAut();
@@ -393,10 +384,22 @@ void CKnihaJazdDlg::OnLvnItemActivateListAuta(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CKnihaJazdDlg::OnUpdateAutoZmaz(CCmdUI *pCmdUI)
 {
-    pCmdUI->Enable(m_IdAuta != 0);
+	int item = m_ZoznamAut.GetSelectionMark();
+    pCmdUI->Enable(item != -1);
 }
 
 void CKnihaJazdDlg::OnUpdateAutoVlastnosti(CCmdUI *pCmdUI)
 {
-    pCmdUI->Enable(m_IdAuta != 0);
+	int item = m_ZoznamAut.GetSelectionMark();
+    pCmdUI->Enable(item != -1);
+}
+
+void CKnihaJazdDlg::OnUpdateAutoOtvor(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable(m_IdFirmy > 0);
+}
+
+void CKnihaJazdDlg::OnUpdateAutoNove(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable(m_IdFirmy > 0);
 }

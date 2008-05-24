@@ -41,6 +41,7 @@ void CCestaDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_STRAVNE, m_Stravne);
 	DDX_Text(pDX, IDC_EDIT_OSTATNE, m_Ostatne);
 	DDX_Control(pDX, IDC_EDIT_SPOLU, m_SpoluCtrl);
+	DDV_MinMaxDouble(pDX, m_PocetKm, 1, 999999);
 }
 
 BEGIN_MESSAGE_MAP(CCestaDlg, CDialog)
@@ -97,10 +98,9 @@ void CCestaDlg::OnOK()
     {
         // Zistime maximalny datum u a nastavime o jeden viac
         CCestaRecordset rs(theApp.GetDB());
-        rs.SetSQLNacitanieMaximalnehoDatumu(m_IdAuta, m_Datum);
+        rs.SetSQLNacitanieMaximalnehoDatumu(m_IdAuta);
         rs.Open();
         COleDateTimeSpan m_Datum = m_Datum + pomDatum;
-
 		rs.Close();
 
         // Pridavame cestu

@@ -244,10 +244,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\VyberAutaDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\VyberCestyDlg.cpp"
 				>
 			</File>
@@ -303,10 +299,6 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\VyberAutaDlg.h"
 				>
 			</File>
 			<File

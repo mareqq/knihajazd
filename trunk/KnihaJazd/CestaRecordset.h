@@ -5,7 +5,7 @@ class CCestaRecordset : public CRecordset
 	DECLARE_DYNAMIC(CCestaRecordset)
 
 public:
-	COleDateTime m_CDatum;	
+	COleDateTime m_CDatum;
 	long m_AId;
 	CString m_CCiel;
 	CString m_CUcel;
@@ -25,10 +25,17 @@ public:
 	virtual CString GetDefaultSQL();
 	virtual void DoFieldExchange(CFieldExchange* pFX);
 
-    void SetSQLNacitanieZoznamuCiest();
-    void SetSQLNacitanieKonkretnejCesty(long aIdParam, COleDateTime Datum);
-    void SetSQLNacitanieMaximalnehoDatumu(long aIdParam, COleDateTime Datum);
+    void SetSQLNacitanieZoznamuCiest(long aIdParam);
+    void SetSQLNacitanieKonkretnejCesty(long aIdParam, COleDateTime cDatumParam);
+    void SetSQLNacitanieMaximalnehoDatumu(long aIdParam);
 
 protected:
     CString m_strSQL;
+
+	enum ETypSQL
+	{
+		ETS_NACITANIE_ZOZNAMU_CIES,
+		ETS_NACITANIE_KONKRETNEJ_CESTY,
+		ETS_NACITANIE_MAXIMALNEHO_DATUMU
+	} m_TypSQL;
 };

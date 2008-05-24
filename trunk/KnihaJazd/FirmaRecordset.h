@@ -26,4 +26,11 @@ public:
 
 protected:
     CString m_strSQL;
+
+	enum ETypSQL
+	{
+		ETS_NACITANIE_ZOZNAMU_FIRIEM,
+		ETS_NACITANIE_KONKRETNEJ_FIRMY,
+		ETS_NACITANIE_MAXIMALNEHO_ID
+	} m_TypSQL;
 };
